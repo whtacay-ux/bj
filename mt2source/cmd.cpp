@@ -1,4 +1,5 @@
 #include "stdafx.h"
+ACMD(do_blackjack);
 #include "utils.h"
 #include "config.h"
 #include "char.h"
@@ -108,6 +109,9 @@ ACMD(do_close_shop);
 ACMD(do_set_walk_mode);
 ACMD(do_set_run_mode);
 ACMD(do_set_skill_group);
+#ifdef ITJA_BLACKJACK_SYSTEM
+ACMD(do_blackjack);
+#endif
 ACMD(do_set_skill_point);
 ACMD(do_cooltime);
 ACMD(do_detaillog);

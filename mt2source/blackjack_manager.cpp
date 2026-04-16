@@ -37,6 +37,7 @@ void CBlackjackManager::OpenBoard(LPCHARACTER ch)
 	pack.header = HEADER_GC_BLACKJACK;
 	pack.subheader = BLACKJACK_SUBHEADER_GC_OPEN;
 	ch->GetDesc()->Packet(&pack, sizeof(pack));
+	ch->ChatPacket(CHAT_TYPE_COMMAND, "blackjack_open");
 }
 
 void CBlackjackManager::CloseBoard(LPCHARACTER ch)
@@ -58,6 +59,7 @@ void CBlackjackManager::CloseBoard(LPCHARACTER ch)
 	pack.header = HEADER_GC_BLACKJACK;
 	pack.subheader = BLACKJACK_SUBHEADER_GC_CLOSE;
 	ch->GetDesc()->Packet(&pack, sizeof(pack));
+	ch->ChatPacket(CHAT_TYPE_COMMAND, "blackjack_close");
 }
 
 void CBlackjackManager::Bet(LPCHARACTER ch, long long llAmount)
@@ -252,6 +254,7 @@ void CBlackjackManager::SendUpdatePacket(LPCHARACTER ch)
 	}
 
 	ch->GetDesc()->Packet(&pack, sizeof(pack));
+	ch->ChatPacket(CHAT_TYPE_COMMAND, "blackjack_update %lld %d %d", game.llBet, GetHandValue(game.vecPlayerCards), GetHandValue(game.vecDealerCards));
 }
 
 void CBlackjackManager::SendResultPacket(LPCHARACTER ch, BYTE bResult)
@@ -275,6 +278,7 @@ void CBlackjackManager::SendResultPacket(LPCHARACTER ch, BYTE bResult)
 		pack.bDealerCards[i] = (i < game.vecDealerCards.size()) ? game.vecDealerCards[i] : 0;
 
 	ch->GetDesc()->Packet(&pack, sizeof(pack));
+	ch->ChatPacket(CHAT_TYPE_COMMAND, "blackjack_result %d", bResult);
 }
 
 void CBlackjackManager::DoubleDown(LPCHARACTER ch)

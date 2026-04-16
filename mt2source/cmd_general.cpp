@@ -2748,12 +2748,44 @@ ACMD(do_change_channel)
 #include "blackjack_manager.h"
 ACMD(do_blackjack)
 {
-	if (ch->GetMyShop() || ch->GetExchange() || ch->GetShop())
+	char arg1[256];
+	one_argument(argument, arg1, sizeof(arg1));
+
+	if (!*arg1)
 	{
-		ch->ChatPacket(CHAT_TYPE_INFO, "Pazar/Ticaret acikken blackjack oynayamazsin.");
+		if (ch->GetMyShop() || ch->GetExchange() || ch->GetShop())
+		{
+			ch->ChatPacket(CHAT_TYPE_INFO, "Pazar/Ticaret acikken blackjack oynayamazsin.");
+			return;
+		}
+		CBlackjackManager::instance().OpenBoard(ch);
 		return;
 	}
 
-	CBlackjackManager::instance().OpenBoard(ch);
+	std::string command(arg1);
+	if (command == "hit")
+		CBlackjackManager::instance().Hit(ch);
+	else if (command == "stand")
+		CBlackjackManager::instance().Stand(ch);
+	else if (command == "split")
+		CBlackjackManager::instance().Split(ch);
+	else if (command == "double")
+		CBlackjackManager::instance().DoubleDown(ch);
+	else if (command == "insurance")
+		CBlackjackManager::instance().Insurance(ch);
+	else if (command == "surrender")
+		CBlackjackManager::instance().Surrender(ch);
+	else if (command == "close")
+		CBlackjackManager::instance().CloseBoard(ch);
+	else if (command == "bet")
+	{
+		char arg2[256];
+		one_argument(argument, arg2, sizeof(arg2));
+		if (*arg2)
+		{
+			long long llAmount = atoll(arg2);
+			CBlackjackManager::instance().Bet(ch, llAmount);
+		}
+	}
 }
 #endif
