@@ -76,6 +76,7 @@ public:
 	void Split(LPCHARACTER ch);
 	void Insurance(LPCHARACTER ch);
 	void Surrender(LPCHARACTER ch);
+	void NewGame(LPCHARACTER ch);
 
 private:
 	void SendUpdatePacket(LPCHARACTER ch);

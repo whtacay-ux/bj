@@ -1911,6 +1911,7 @@ class GameWindow(ui.ScriptWindow):
 			# END_OF_PRIVATE_SHOP_PRICE_LIST
 			
 			"blackjack_open"		: self.__Blackjack_Open,
+			"blackjack_close"		: self.__Blackjack_Close,
 			"blackjack_update"		: self.__Blackjack_Update,
 			"blackjack_result"		: self.__Blackjack_Result,
 		}
@@ -1924,19 +1925,27 @@ class GameWindow(ui.ScriptWindow):
 	def __Blackjack_Open(self):
 		self.interface.OpenBlackjack()
 
-	def __Blackjack_Update(self, bet, pScore, dScore):
+	def __Blackjack_Close(self):
 		if self.interface.wndBlackjack:
-			self.interface.wndBlackjack.UpdateGame(bet, pScore, dScore)
+			self.interface.wndBlackjack.Hide()
 
-	def __Blackjack_Result(self, result):
+	def __Blackjack_Update(self, bet, pScore, dScore, state, pCards, dCards):
+		if self.interface.wndBlackjack:
+			self.interface.wndBlackjack.UpdateGame(bet, pScore, dScore, state, pCards, dCards)
+
+	def __Blackjack_Result(self, result, pScore, dScore, dCards):
 		# Handle result (0: none, 1: blackjack, 2: win, 3: lose, 4: draw, 5: bust, 6: surrender)
-		results = ["", "Blackjack!", "Kazandın!", "Kaybettin.", "Berabere.", "Bust!", "Teslim Oldun."]
+		results = ["", "BLACKJACK!", "Tebrikler Kazandınız!", "Kurpiyer Kazandı.", "BERABERE", "BUST! Kaybettiniz.", "Teslim Oldun."]
 		try:
 			res_idx = int(result)
 			if res_idx < len(results):
 				chat.AppendChat(chat.CHAT_TYPE_INFO, "[Blackjack] " + results[res_idx])
+			
+			if self.interface.wndBlackjack:
+				self.interface.wndBlackjack.ShowResult(res_idx, pScore, dScore, dCards)
 		except:
-			pass
+			import exception
+			exception.LogException()
 
 	def BINARY_ServerCommand_Run(self, line):
 		try:

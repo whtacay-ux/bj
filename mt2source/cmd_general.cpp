@@ -2748,8 +2748,8 @@ ACMD(do_change_channel)
 #include "blackjack_manager.h"
 ACMD(do_blackjack)
 {
-	char arg1[256];
-	one_argument(argument, arg1, sizeof(arg1));
+	char arg1[256], arg2[256];
+	two_arguments(argument, arg1, sizeof(arg1), arg2, sizeof(arg2));
 
 	if (!*arg1)
 	{
@@ -2777,14 +2777,18 @@ ACMD(do_blackjack)
 		CBlackjackManager::instance().Surrender(ch);
 	else if (command == "close")
 		CBlackjackManager::instance().CloseBoard(ch);
+	else if (command == "newgame")
+		CBlackjackManager::instance().NewGame(ch);
 	else if (command == "bet")
 	{
-		char arg2[256];
-		one_argument(argument, arg2, sizeof(arg2));
 		if (*arg2)
 		{
 			long long llAmount = atoll(arg2);
 			CBlackjackManager::instance().Bet(ch, llAmount);
+		}
+		else
+		{
+			ch->ChatPacket(CHAT_TYPE_INFO, "Lutfen bir bahis miktari girin.");
 		}
 	}
 }

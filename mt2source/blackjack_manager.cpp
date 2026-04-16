@@ -74,7 +74,13 @@ void CBlackjackManager::Bet(LPCHARACTER ch, long long llAmount)
 	if (it == m_mapGames.end() || it->second.bState != BLACKJACK_STATE_WAITING_BET)
 		return;
 
-	if (llAmount <= 0 || ch->GetGold() < llAmount)
+	if (llAmount <= 0)
+	{
+		ch->ChatPacket(CHAT_TYPE_INFO, "Gecersiz bahis miktari.");
+		return;
+	}
+
+	if (ch->GetGold() < llAmount)
 	{
 		ch->ChatPacket(CHAT_TYPE_INFO, "Yetersiz Yang.");
 		return;
@@ -237,30 +243,41 @@ void CBlackjackManager::SendUpdatePacket(LPCHARACTER ch)
 
 	TBlackjackGame& game = it->second;
 
-	/*
-	TPacketGCBlackjackUpdate pack;
-	pack.header = HEADER_GC_BLACKJACK;
-	pack.subheader = BLACKJACK_SUBHEADER_GC_UPDATE;
-	pack.llBet = game.llBet;
-	
-	pack.bCurrentHand = game.bCurrentHand;
-	pack.bHasSplit = game.bHasSplit;
-	pack.llBetHand2 = game.llBetHand2;
-
-	pack.bPlayerCardCount = game.vecPlayerCards.size();
-	pack.bDealerCardCount = game.vecDealerCards.size();
-	pack.bPlayerCardCountHand2 = game.vecPlayerCardsHand2.size();
-	
-	for (int i = 0; i < 10; ++i)
+	std::string strPlayerCards = "";
+	for (size_t i = 0; i < game.vecPlayerCards.size(); ++i)
 	{
-		pack.bPlayerCards[i] = (i < game.vecPlayerCards.size()) ? game.vecPlayerCards[i] : 0;
-		pack.bDealerCards[i] = (i < game.vecDealerCards.size()) ? game.vecDealerCards[i] : 0;
-		pack.bPlayerCardsHand2[i] = (i < game.vecPlayerCardsHand2.size()) ? game.vecPlayerCardsHand2[i] : 0;
+		strPlayerCards += std::to_string(game.vecPlayerCards[i]);
+		if (i < game.vecPlayerCards.size() - 1) strPlayerCards += ",";
+	}
+	if (strPlayerCards.empty()) strPlayerCards = "0";
+
+	std::string strDealerCards = "";
+	if (game.bState == BLACKJACK_STATE_PLAYING)
+	{
+		// Only show first card during play
+		if (!game.vecDealerCards.empty())
+			strDealerCards = std::to_string(game.vecDealerCards[0]);
+		else
+			strDealerCards = "0";
+	}
+	else
+	{
+		for (size_t i = 0; i < game.vecDealerCards.size(); ++i)
+		{
+			strDealerCards += std::to_string(game.vecDealerCards[i]);
+			if (i < game.vecDealerCards.size() - 1) strDealerCards += ",";
+		}
+		if (strDealerCards.empty()) strDealerCards = "0";
 	}
 
-	ch->GetDesc()->Packet(&pack, sizeof(pack));
-	*/
-	ch->ChatPacket(CHAT_TYPE_COMMAND, "blackjack_update %lld %d %d", game.llBet, GetHandValue(game.vecPlayerCards), GetHandValue(game.vecDealerCards));
+	ch->ChatPacket(CHAT_TYPE_COMMAND, "blackjack_update %lld %d %d %d %s %s", 
+		game.llBet, 
+		GetHandValue(game.vecPlayerCards), 
+		(game.bState == BLACKJACK_STATE_PLAYING && !game.vecDealerCards.empty()) ? GetCardValue(game.vecDealerCards[0]) : GetHandValue(game.vecDealerCards),
+		game.bState,
+		strPlayerCards.c_str(),
+		strDealerCards.c_str()
+	);
 }
 
 void CBlackjackManager::SendResultPacket(LPCHARACTER ch, BYTE bResult)
@@ -272,21 +289,44 @@ void CBlackjackManager::SendResultPacket(LPCHARACTER ch, BYTE bResult)
 
 	TBlackjackGame& game = it->second;
 
-	/*
-	TPacketGCBlackjackResult pack;
-	pack.header = HEADER_GC_BLACKJACK;
-	pack.subheader = BLACKJACK_SUBHEADER_GC_RESULT;
-	pack.bResult = bResult;
-	pack.llPayout = 0; // Can calculate if needed
+	std::string strDealerCards = "";
+	for (size_t i = 0; i < game.vecDealerCards.size(); ++i)
+	{
+		strDealerCards += std::to_string(game.vecDealerCards[i]);
+		if (i < game.vecDealerCards.size() - 1) strDealerCards += ",";
+	}
+	if (strDealerCards.empty()) strDealerCards = "0";
 
-	// Include final dealer cards for the result screen
-	pack.bDealerCardCount = game.vecDealerCards.size();
-	for (int i = 0; i < 10; ++i)
-		pack.bDealerCards[i] = (i < game.vecDealerCards.size()) ? game.vecDealerCards[i] : 0;
+	ch->ChatPacket(CHAT_TYPE_COMMAND, "blackjack_result %d %d %d %s", 
+		bResult, 
+		GetHandValue(game.vecPlayerCards), 
+		GetHandValue(game.vecDealerCards),
+		strDealerCards.c_str()
+	);
+}
 
-	ch->GetDesc()->Packet(&pack, sizeof(pack));
-	*/
-	ch->ChatPacket(CHAT_TYPE_COMMAND, "blackjack_result %d", bResult);
+void CBlackjackManager::NewGame(LPCHARACTER ch)
+{
+	if (!ch) return;
+	
+	auto it = m_mapGames.find(ch->GetPlayerID());
+	if (it == m_mapGames.end()) return;
+	
+	TBlackjackGame& game = it->second;
+	if (game.bState != BLACKJACK_STATE_FINISHED) return;
+	
+	game.bState = BLACKJACK_STATE_WAITING_BET;
+	game.llBet = 0;
+	game.llInsuranceBet = 0;
+	game.vecPlayerCards.clear();
+	game.vecDealerCards.clear();
+	game.bResult = BLACKJACK_RESULT_NONE;
+	game.bHasSplit = false;
+	game.vecPlayerCardsHand2.clear();
+	game.llBetHand2 = 0;
+	game.bCurrentHand = 0;
+	
+	SendUpdatePacket(ch);
 }
 
 void CBlackjackManager::DoubleDown(LPCHARACTER ch)

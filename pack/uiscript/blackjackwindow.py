@@ -16,7 +16,7 @@ window = {
 	(
 		{
 			"name" : "board",
-			"type" : "board_with_titlebar",
+			"type" : "board",
 
 			"x" : 0,
 			"y" : 0,
@@ -24,10 +24,26 @@ window = {
 			"width" : 400,
 			"height" : 350,
 
-			"title" : "Blackjack",
-
 			"children" :
 			(
+				## Title
+				{
+					"name" : "TitleBar",
+					"type" : "titlebar",
+					"style" : ("attach",),
+
+					"x" : 8,
+					"y" : 7,
+
+					"width" : 384,
+					"color" : "yellow",
+
+					"children" :
+					(
+						{ "name":"TitleName", "type":"text", "x":192, "y":3, "text":"Blackjack", "text_horizontal_align":"center" },
+					),
+				},
+
 				## Dealer Cards
 				{
 					"name" : "DealerArea",
@@ -36,11 +52,11 @@ window = {
 					"children" : (
 						{"name":"DealerText", "type":"text", "x":0, "y":0, "text":"Krupiye", "all_align":"center"},
 						{"name":"DealerScoreValue", "type":"text", "x":0, "y":20, "text":"0", "all_align":"center"},
-						{"name":"DealerCardSlot_0", "type":"image", "x":50, "y":40, "image":ROOT+"slot.sub"},
-						{"name":"DealerCardSlot_1", "type":"image", "x":80, "y":40, "image":ROOT+"slot.sub"},
-						{"name":"DealerCardSlot_2", "type":"image", "x":110, "y":40, "image":ROOT+"slot.sub"},
-						{"name":"DealerCardSlot_3", "type":"image", "x":140, "y":40, "image":ROOT+"slot.sub"},
-						{"name":"DealerCardSlot_4", "type":"image", "x":170, "y":40, "image":ROOT+"slot.sub"},
+						{"name":"DealerCardSlot_0", "type":"image", "x":50, "y":40, "image":"d:/ymir work/ui/public/parameter_slot_01.sub", "children":({"name":"DealerCardValue_0", "type":"text", "x":0, "y":0, "text":"", "all_align":"center"},)},
+						{"name":"DealerCardSlot_1", "type":"image", "x":80, "y":40, "image":"d:/ymir work/ui/public/parameter_slot_01.sub", "children":({"name":"DealerCardValue_1", "type":"text", "x":0, "y":0, "text":"", "all_align":"center"},)},
+						{"name":"DealerCardSlot_2", "type":"image", "x":110, "y":40, "image":"d:/ymir work/ui/public/parameter_slot_01.sub", "children":({"name":"DealerCardValue_2", "type":"text", "x":0, "y":0, "text":"", "all_align":"center"},)},
+						{"name":"DealerCardSlot_3", "type":"image", "x":140, "y":40, "image":"d:/ymir work/ui/public/parameter_slot_01.sub", "children":({"name":"DealerCardValue_3", "type":"text", "x":0, "y":0, "text":"", "all_align":"center"},)},
+						{"name":"DealerCardSlot_4", "type":"image", "x":170, "y":40, "image":"d:/ymir work/ui/public/parameter_slot_01.sub", "children":({"name":"DealerCardValue_4", "type":"text", "x":0, "y":0, "text":"", "all_align":"center"},)},
 					),
 				},
 
@@ -52,11 +68,11 @@ window = {
 					"children" : (
 						{"name":"PlayerText", "type":"text", "x":0, "y":0, "text":"Siz", "all_align":"center"},
 						{"name":"PlayerScoreValue", "type":"text", "x":0, "y":20, "text":"0", "all_align":"center"},
-						{"name":"PlayerCardSlot_0", "type":"image", "x":50, "y":40, "image":ROOT+"slot.sub"},
-						{"name":"PlayerCardSlot_1", "type":"image", "x":80, "y":40, "image":ROOT+"slot.sub"},
-						{"name":"PlayerCardSlot_2", "type":"image", "x":110, "y":40, "image":ROOT+"slot.sub"},
-						{"name":"PlayerCardSlot_3", "type":"image", "x":140, "y":40, "image":ROOT+"slot.sub"},
-						{"name":"PlayerCardSlot_4", "type":"image", "x":170, "y":40, "image":ROOT+"slot.sub"},
+						{"name":"PlayerCardSlot_0", "type":"image", "x":50, "y":40, "image":"d:/ymir work/ui/public/parameter_slot_01.sub", "children":({"name":"PlayerCardValue_0", "type":"text", "x":0, "y":0, "text":"", "all_align":"center"},)},
+						{"name":"PlayerCardSlot_1", "type":"image", "x":80, "y":40, "image":"d:/ymir work/ui/public/parameter_slot_01.sub", "children":({"name":"PlayerCardValue_1", "type":"text", "x":0, "y":0, "text":"", "all_align":"center"},)},
+						{"name":"PlayerCardSlot_2", "type":"image", "x":110, "y":40, "image":"d:/ymir work/ui/public/parameter_slot_01.sub", "children":({"name":"PlayerCardValue_2", "type":"text", "x":0, "y":0, "text":"", "all_align":"center"},)},
+						{"name":"PlayerCardSlot_3", "type":"image", "x":140, "y":40, "image":"d:/ymir work/ui/public/parameter_slot_01.sub", "children":({"name":"PlayerCardValue_3", "type":"text", "x":0, "y":0, "text":"", "all_align":"center"},)},
+						{"name":"PlayerCardSlot_4", "type":"image", "x":170, "y":40, "image":"d:/ymir work/ui/public/parameter_slot_01.sub", "children":({"name":"PlayerCardValue_4", "type":"text", "x":0, "y":0, "text":"", "all_align":"center"},)},
 					),
 				},
 
@@ -67,18 +83,44 @@ window = {
 					"x" : 10, "y" : 240, "width" : 380, "height" : 100,
 					"children" : (
 						{
-							"name" : "BetInput",
-							"type" : "editline",
+							"name" : "BetInputSlot",
+							"type" : "image",
 							"x" : 50, "y" : 10,
-							"width" : 100, "height" : 20,
-							"input_limit" : 12,
-							"text" : "1000",
+							"default_image" : "d:/ymir work/ui/public/parameter_slot_03.sub",
+							"children" : (
+								{
+									"name" : "BetInput",
+									"type" : "editline",
+									"x" : 3, "y" : 3,
+									"width" : 100, "height" : 20,
+									"input_limit" : 12,
+									"text" : "1000",
+								},
+							),
+						},
+						{
+							"name" : "ClearBetButton",
+							"type" : "button",
+							"x" : 160, "y" : 10,
+							"text" : "Temizle",
+							"default_image" : ROOT + "middle_button_01.sub",
+							"over_image" : ROOT + "middle_button_02.sub",
+							"down_image" : ROOT + "middle_button_03.sub",
 						},
 						{
 							"name" : "BetButton",
 							"type" : "button",
-							"x" : 160, "y" : 10,
+							"x" : 220, "y" : 10,
 							"text" : "Bahis Yap",
+							"default_image" : ROOT + "middle_button_01.sub",
+							"over_image" : ROOT + "middle_button_02.sub",
+							"down_image" : ROOT + "middle_button_03.sub",
+						},
+						{
+							"name" : "NewGameButton",
+							"type" : "button",
+							"x" : 280, "y" : 10,
+							"text" : "Yeni Oyun",
 							"default_image" : ROOT + "middle_button_01.sub",
 							"over_image" : ROOT + "middle_button_02.sub",
 							"down_image" : ROOT + "middle_button_03.sub",
