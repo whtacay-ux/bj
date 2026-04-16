@@ -1237,6 +1237,53 @@ class ExpandedImageBox(ImageBox):
 	def GetHeight(self):
 		return wndMgr.GetWindowHeight(self.hWnd)
 
+	def GetRotation(self):
+		return wndMgr.GetRotation(self.hWnd)
+
+	def MoveStart(self):
+		self.isMove = True
+		self.moveStartTime = app.GetTime()
+
+	def MoveStop(self):
+		self.isMove = False
+
+	def SetMovePos(self, x, y):
+		self.dstX = x
+		self.dstY = y
+
+	def SetMoveSpeed(self, speed):
+		self.moveSpeed = speed
+
+	def SetMoveFunc(self, moveFunc):
+		self.moveFunc = moveFunc
+
+	def OnMoveDone(self):
+		if self.moveFunc:
+			self.moveFunc()
+
+	def OnUpdate(self):
+		if not self.isMove:
+			return
+
+		(x, y) = self.GetLocalPosition()
+		if x == self.dstX and y == self.dstY:
+			self.isMove = False
+			self.OnMoveDone()
+			return
+
+		vX = float(self.dstX - x)
+		vY = float(self.dstY - y)
+		dist = __import__("math").sqrt(vX * vX + vY * vY)
+		if dist <= self.moveSpeed:
+			self.SetPosition(self.dstX, self.dstY)
+			self.isMove = False
+			self.OnMoveDone()
+			return
+
+		vX = vX / dist * self.moveSpeed
+		vY = vY / dist * self.moveSpeed
+		self.SetPosition(int(x + vX), int(y + vY))
+
 class AniImageBox(Window):
 	def __init__(self, layer = "UI"):
 		Window.__init__(self, layer)

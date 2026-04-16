@@ -1,5 +1,5 @@
 #include "stdafx.h"
-ACMD(do_blackjack);
+#include "cmd.h"
 #include "utils.h"
 #include "config.h"
 #include "char.h"

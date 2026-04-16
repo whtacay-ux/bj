@@ -1,0 +1,90 @@
+ScriptType            RaceDataScript
+
+BaseModelFileName     "d:/ymir work/npc/steap_sw2c_npc1/steap_sw2c_npc1.gr2"
+
+Group ShapeData
+{
+    PathName 		 "d:\ymir work\npc\steap_sw2c_npc1\"
+    ShapeDataCount 		 4
+    Group ShapeData00
+    {
+        ShapeIndex 		 0
+        Model 		 "steap_sw2c_npc1.gr2"
+        SourceSkin 		 "poker_chip_single_diffuse_color.dds"
+        TargetSkin 		 "poker_chip_single_diffuse_color.dds"
+    }
+    Group ShapeData01
+    {
+        ShapeIndex 		 0
+        Model 		 "steap_sw2c_npc1.gr2"
+        SourceSkin 		 "Chairs.dds"
+        TargetSkin 		 "Chairs.dds"
+    }
+    Group ShapeData02
+    {
+        ShapeIndex 		 0
+        Model 		 "steap_sw2c_npc1.gr2"
+        SourceSkin 		 "BlackJackTable.dds"
+        TargetSkin 		 "BlackJackTable.dds"
+    }
+    Group ShapeData03
+    {
+        ShapeIndex 		 0
+        Model 		 "steap_sw2c_npc1.gr2"
+        SourceSkin 		 "BlackJackTable2.dds"
+        TargetSkin 		 "BlackJackTable2.dds"
+    }
+}
+Group AttachingData
+{
+    AttachingDataCount       3
+    
+    Group AttachingData00
+    {
+        AttachingDataType    1
+        
+        isAttaching          1
+        AttachingModelIndex  0
+        AttachingBoneName    "STEAP_ROOT"
+        
+        CollisionType        1
+        
+        SphereDataCount      1
+        Group SphereData00
+        {
+            Radius           70.000000
+            Position         0.000000 0.000000 80.000000
+        }
+    }
+    
+    Group AttachingData01
+    {
+        AttachingDataType    1
+        
+        isAttaching          1
+        AttachingModelIndex  0
+        AttachingBoneName    "STEAP_ROOT"
+        
+        CollisionType        3
+        
+        SphereDataCount      1
+        Group SphereData00
+        {
+            Radius           80.000000
+            Position         0.000000 0.000000 80.000000
+        }
+    }
+    
+    Group AttachingData02
+    {
+        AttachingDataType    2
+        
+        isAttaching          1
+        AttachingModelIndex  0
+        AttachingBoneName    "STEAP_ROOT"
+        
+        EffectScriptName     "D:\ymir work\npc\steap_sw2c_npc1\effect\general\general.mse"
+        EffectPosition       0.000000 0.000000 0.000000
+        EffectRotation       0.000000 0.000000 0.000000
+    }
+}

@@ -5,6 +5,32 @@ import player
 import app
 import localeInfo
 
+class Card(ui.ExpandedImageBox):
+	def __init__(self, parent, cardId, isDealer=False):
+		ui.ExpandedImageBox.__init__(self)
+		self.SetParent(parent)
+		self.cardId = int(cardId)
+		self.isDealer = isDealer
+		
+		# User's logic: (cid - 1) / 13 = suit, (cid - 1) % 13 = rank
+		if self.cardId == 0: # Secret card
+			self.LoadImage("d:/ymir work/ui/game/black_jack/secret_card.tga")
+		else:
+			suit = (self.cardId - 1) / 13
+			rank = (self.cardId - 1) % 13 + 1 # 1-13
+			self.LoadImage("d:/ymir work/ui/game/black_jack/%d.tga" % rank)
+			
+			self.suitImg = ui.ImageBox()
+			self.suitImg.SetParent(self)
+			self.suitImg.LoadImage("d:/ymir work/ui/game/black_jack/small_type/%d.tga" % suit)
+			self.suitImg.SetPosition(5, 5)
+			self.suitImg.Show()
+			
+		self.Show()
+
+	def __del__(self):
+		ui.ExpandedImageBox.__del__(self)
+
 class BlackjackWindow(ui.ScriptWindow):
 	STATE_WAITING_BET = 0
 	STATE_PLAYING = 1
@@ -16,6 +42,9 @@ class BlackjackWindow(ui.ScriptWindow):
 	def __init__(self):
 		ui.ScriptWindow.__init__(self)
 		self.isLoaded = False
+		self.playerCards = []
+		self.dealerCards = []
+		self.resultImage = None
 
 	def __del__(self):
 		ui.ScriptWindow.__del__(self)
@@ -72,6 +101,11 @@ class BlackjackWindow(ui.ScriptWindow):
 			self.insuranceBtn.SetEvent(ui.__mem_func__(self.__OnInsurance))
 			self.surrenderBtn.SetEvent(ui.__mem_func__(self.__OnSurrender))
 			
+			self.resultImage = ui.ImageBox()
+			self.resultImage.SetParent(self.board)
+			self.resultImage.SetPosition(210 - 100, 150) # Center-ish
+			self.resultImage.Hide()
+			
 			self.__ResetUI()
 			
 		except:
@@ -91,8 +125,9 @@ class BlackjackWindow(ui.ScriptWindow):
 	def __ResetUI(self):
 		self.playerScore.SetText("0")
 		self.dealerScore.SetText("0")
-		for t in self.playerCardTexts: t.SetText("")
-		for t in self.dealerCardTexts: t.SetText("")
+		self.playerCards = []
+		self.dealerCards = []
+		if self.resultImage: self.resultImage.Hide()
 		self.__SetButtonState(self.STATE_WAITING_BET)
 
 	def __SetButtonState(self, state):
@@ -172,26 +207,57 @@ class BlackjackWindow(ui.ScriptWindow):
 			self.playerScore.SetText(str(pScore))
 			self.dealerScore.SetText(str(dScore))
 			
+			if self.resultImage: self.resultImage.Hide()
+			
 			nState = int(state)
 			self.__SetButtonState(nState)
 			
 			# Update cards
-			p_list = pCards.split(",")
-			d_list = dCards.split(",")
+			p_list = [int(x) for x in pCards.split(",") if x and x != ""]
+			d_list = [int(x) for x in dCards.split(",") if x and x != ""]
 			
-			for i in range(5):
-				if i < len(p_list) and p_list[i] and p_list[i] != "0":
-					self.playerCardTexts[i].SetText(self.GetCardName(p_list[i]))
+			# Dealer secret card logic if playing
+			if nState == self.STATE_PLAYING and len(d_list) > 0:
+				if len(d_list) == 1:
+					d_list.append(0) # Secret card
+			
+			# Clear old cards if count mismatch or reset needed
+			if len(p_list) < len(self.playerCards) or len(d_list) < len(self.dealerCards):
+				self.playerCards = []
+				self.dealerCards = []
+
+			# Refill Player Cards
+			for i in range(len(p_list)):
+				if i >= len(self.playerCards):
+					card = Card(self.board, p_list[i])
+					# Animate from deck location (top right-ish)
+					card.SetPosition(350, 50)
+					card.SetMovePos(50 + (i * 35), 180)
+					card.SetMoveSpeed(15)
+					card.MoveStart()
+					self.playerCards.append(card)
 				else:
-					self.playerCardTexts[i].SetText("")
-					
-				if i < len(d_list) and d_list[i] and d_list[i] != "0":
-					self.dealerCardTexts[i].SetText(self.GetCardName(d_list[i]))
+					if self.playerCards[i].cardId != p_list[i]:
+						# Replace if ID changed (shouldn't happen often in BJ unless reset)
+						self.playerCards[i].Hide()
+						self.playerCards[i] = Card(self.board, p_list[i])
+						self.playerCards[i].SetPosition(50 + (i * 35), 180)
+
+			# Refill Dealer Cards
+			for i in range(len(d_list)):
+				if i >= len(self.dealerCards):
+					card = Card(self.board, d_list[i], True)
+					card.SetPosition(350, 50)
+					card.SetMovePos(50 + (i * 35), 90)
+					card.SetMoveSpeed(15)
+					card.MoveStart()
+					self.dealerCards.append(card)
 				else:
-					if i == 1 and nState == self.STATE_PLAYING:
-						self.dealerCardTexts[i].SetText("?")
-					else:
-						self.dealerCardTexts[i].SetText("")
+					if self.dealerCards[i].cardId != d_list[i]:
+						self.dealerCards[i].Hide()
+						self.dealerCards[i] = Card(self.board, d_list[i], True)
+						self.dealerCards[i].SetPosition(50 + (i * 35), 90)
+
 		except:
 			import exception
 			exception.LogException()
@@ -202,12 +268,22 @@ class BlackjackWindow(ui.ScriptWindow):
 			self.dealerScore.SetText(str(dScore))
 			self.__SetButtonState(self.STATE_FINISHED)
 			
-			d_list = dCards.split(",")
-			for i in range(5):
-				if i < len(d_list) and d_list[i] and d_list[i] != "0":
-					self.dealerCardTexts[i].SetText(self.GetCardName(d_list[i]))
+			# Update dealer cards (flip secret card)
+			d_list = [int(x) for x in dCards.split(",") if x and x != ""]
+			self.dealerCards = [] # Clear and redraw for result
+			for i in range(len(d_list)):
+				card = Card(self.board, d_list[i], True)
+				card.SetPosition(50 + (i * 35), 90)
+				self.dealerCards.append(card)
+				
+			# Show visual result
+			if self.resultImage:
+				if "win" in result.lower() or "won" in result.lower() or "tebrikler" in result.lower():
+					self.resultImage.LoadImage("d:/ymir work/ui/game/black_jack/won.tga")
 				else:
-					self.dealerCardTexts[i].SetText("")
+					self.resultImage.LoadImage("d:/ymir work/ui/game/black_jack/lose.tga")
+				self.resultImage.Show()
+
 		except:
 			import exception
 			exception.LogException()

@@ -1934,8 +1934,8 @@ class GameWindow(ui.ScriptWindow):
 			self.interface.wndBlackjack.UpdateGame(bet, pScore, dScore, state, pCards, dCards)
 
 	def __Blackjack_Result(self, result, pScore, dScore, dCards):
-		# Handle result (0: none, 1: blackjack, 2: win, 3: lose, 4: draw, 5: bust, 6: surrender)
-		results = ["", "BLACKJACK!", "Tebrikler Kazandınız!", "Kurpiyer Kazandı.", "BERABERE", "BUST! Kaybettiniz.", "Teslim Oldun."]
+		# Server enum: 0:None, 1:Win, 2:Lose, 3:Draw, 4:BJ, 5:Bust, 6:Surrender
+		results = ["", "Tebrikler Kazandınız!", "Kurpiyer Kazandı.", "BERABERE", "BLACKJACK!", "BUST! Kaybettiniz.", "Teslim Oldun."]
 		try:
 			res_idx = int(result)
 			if res_idx < len(results):
