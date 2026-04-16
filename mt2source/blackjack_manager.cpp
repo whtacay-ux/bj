@@ -33,10 +33,12 @@ void CBlackjackManager::OpenBoard(LPCHARACTER ch)
 	game.vecDealerCards.clear();
 	game.bResult = BLACKJACK_RESULT_NONE;
 
+	/*
 	TPacketGCBlackjack pack;
 	pack.header = HEADER_GC_BLACKJACK;
 	pack.subheader = BLACKJACK_SUBHEADER_GC_OPEN;
 	ch->GetDesc()->Packet(&pack, sizeof(pack));
+	*/
 	ch->ChatPacket(CHAT_TYPE_COMMAND, "blackjack_open");
 }
 
@@ -55,10 +57,12 @@ void CBlackjackManager::CloseBoard(LPCHARACTER ch)
 		m_mapGames.erase(it);
 	}
 
+	/*
 	TPacketGCBlackjack pack;
 	pack.header = HEADER_GC_BLACKJACK;
 	pack.subheader = BLACKJACK_SUBHEADER_GC_CLOSE;
 	ch->GetDesc()->Packet(&pack, sizeof(pack));
+	*/
 	ch->ChatPacket(CHAT_TYPE_COMMAND, "blackjack_close");
 }
 
@@ -233,6 +237,7 @@ void CBlackjackManager::SendUpdatePacket(LPCHARACTER ch)
 
 	TBlackjackGame& game = it->second;
 
+	/*
 	TPacketGCBlackjackUpdate pack;
 	pack.header = HEADER_GC_BLACKJACK;
 	pack.subheader = BLACKJACK_SUBHEADER_GC_UPDATE;
@@ -254,6 +259,7 @@ void CBlackjackManager::SendUpdatePacket(LPCHARACTER ch)
 	}
 
 	ch->GetDesc()->Packet(&pack, sizeof(pack));
+	*/
 	ch->ChatPacket(CHAT_TYPE_COMMAND, "blackjack_update %lld %d %d", game.llBet, GetHandValue(game.vecPlayerCards), GetHandValue(game.vecDealerCards));
 }
 
@@ -266,6 +272,7 @@ void CBlackjackManager::SendResultPacket(LPCHARACTER ch, BYTE bResult)
 
 	TBlackjackGame& game = it->second;
 
+	/*
 	TPacketGCBlackjackResult pack;
 	pack.header = HEADER_GC_BLACKJACK;
 	pack.subheader = BLACKJACK_SUBHEADER_GC_RESULT;
@@ -278,6 +285,7 @@ void CBlackjackManager::SendResultPacket(LPCHARACTER ch, BYTE bResult)
 		pack.bDealerCards[i] = (i < game.vecDealerCards.size()) ? game.vecDealerCards[i] : 0;
 
 	ch->GetDesc()->Packet(&pack, sizeof(pack));
+	*/
 	ch->ChatPacket(CHAT_TYPE_COMMAND, "blackjack_result %d", bResult);
 }
 

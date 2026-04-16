@@ -98,14 +98,11 @@ class BlackjackWindow(ui.ScriptWindow):
 	def __OnSurrender(self):
 		net.SendChatPacket("/blackjack surrender")
 
-	def UpdateGame(self, data):
-		# data is a string like "1000 21 17" (bet pScore dScore)
+	def UpdateGame(self, bet, pScore, dScore):
 		try:
-			tokens = data.split()
-			if len(tokens) >= 3:
-				self.playerScore.SetText(tokens[1])
-				self.dealerScore.SetText(tokens[2])
-				# Here we could disable/enable buttons based on state
+			self.playerScore.SetText(str(pScore))
+			self.dealerScore.SetText(str(dScore))
+			# Burada oyun durumuna göre butonları pasif/aktif yapabilirsiniz
 		except:
 			pass
 

@@ -1924,10 +1924,9 @@ class GameWindow(ui.ScriptWindow):
 	def __Blackjack_Open(self):
 		self.interface.OpenBlackjack()
 
-	def __Blackjack_Update(self, data):
-		# data would be a string like "bet pScore dScore"
+	def __Blackjack_Update(self, bet, pScore, dScore):
 		if self.interface.wndBlackjack:
-			self.interface.wndBlackjack.UpdateGame(data)
+			self.interface.wndBlackjack.UpdateGame(bet, pScore, dScore)
 
 	def __Blackjack_Result(self, result):
 		# Handle result (0: none, 1: blackjack, 2: win, 3: lose, 4: draw, 5: bust, 6: surrender)
