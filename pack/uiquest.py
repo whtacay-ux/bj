@@ -1,4 +1,4 @@
-# -*- coding:cp949 -*-
+# -*- coding: utf-8 -*-
 import ui
 import dbg
 import app
@@ -458,7 +458,7 @@ class QuestDialog(ui.ScriptWindow):
 
 	# END_OF_QUEST_CANCEL
 
-	def MakeQuestion(self, n):  # n�� ��� ����Ʈ ��ȭâ�� ������ ��ư�� "�ݱ�"�� ������ ��ü ����Ʈ ��ư ����. by ����ȣ
+	def MakeQuestion(self, n):  # n      ""     . by 
 		global entire_questbutton_number
 		global entire_questpage_number
 		global cur_questpage_number
@@ -549,7 +549,7 @@ class QuestDialog(ui.ScriptWindow):
 		self.prevbutton = None
 		self.CloseSelf()
 
-	def AppendQuestion(self, name, idx):  # idx�� 0���� ������. PythonEventManager.cpp line 881 ����. by ����ȣ
+	def AppendQuestion(self, name, idx):  # idx 0 . PythonEventManager.cpp line 881 . by 
 		if not self.btnAnswer:
 			return
 
@@ -596,7 +596,7 @@ class QuestDialog(ui.ScriptWindow):
 	# QUEST_INPUT
 	def OnKeyDown(self, key):
 		if self.btnAnswer == None:
-			## ���ù��� ���� '����', 'Ȯ��' ���� �Ϲ� ��ư�� �ִ� ��쿡 ���� ó��
+			##   '', ''       
 			if None != self.btnNext:
 				if app.DIK_RETURN == key:
 					self.OnPressEscapeKey()
@@ -641,7 +641,7 @@ class QuestDialog(ui.ScriptWindow):
 
 	def OnPressEscapeKey(self):
 
-		# ESCŰ�� ���� ��� "����" ��ư�� ���� �Ͱ� ���� ȿ���� ������ ��.
+		# ESC   ""       .
 		if None != self.btnNext:
 			if event.BUTTON_TYPE_CANCEL == self.nextButtonType:
 				event.SelectAnswer(self.descIndex, 254)

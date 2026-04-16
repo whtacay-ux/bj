@@ -33,7 +33,7 @@ import uiPrivateShopBuilder
 import uiCommon
 import uiRefine
 import uiEquipmentDialog
-import uiBlackjack
+import uiblackjack
 import uiGameButton
 import uiTip
 import uiCube
@@ -172,7 +172,7 @@ class Interface(object):
 		return True
 
 	def __MakeWindows(self):
-		self.wndBlackjack = uiBlackjack.BlackjackWindow()
+		self.wndBlackjack = uiblackjack.BlackjackWindow()
 		wndCharacter = uiCharacter.CharacterWindow()
 		wndInventory = uiInventory.InventoryWindow()
 		wndInventory.BindInterfaceClass(self)

@@ -21,7 +21,7 @@ class BlackjackWindow(ui.ScriptWindow):
 		
 		try:
 			pyScrLoader = ui.PythonScriptLoader()
-			pyScrLoader.LoadScriptFile(self, "UIScript/BlackjackWindow.py")
+			pyScrLoader.LoadScriptFile(self, "UIScript/blackjackwindow.py")
 		except:
 			import exception
 			exception.Abort("BlackjackWindow.LoadWindow.LoadObject")
